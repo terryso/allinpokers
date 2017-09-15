@@ -1,4 +1,8 @@
 import os
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "allin_pokers.settings")
+django.setup()
 
 import redis
 from rq import Worker, Queue, Connection
