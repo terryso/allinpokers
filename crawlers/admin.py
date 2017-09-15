@@ -62,12 +62,17 @@ def update_player_info(modeladmin, request, queryset):
 
 def update_next_100_players_action(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
-    q.enqueue(update_next_100_players, ori_id)
+    q.enqueue(update_next_players, ori_id, 100)
 
 
-def update_next_100_players(ori_id):
+def update_next_1000_players_action(modeladmin, request, queryset):
+    ori_id = int(queryset.first().ori_id)
+    q.enqueue(update_next_players, ori_id, 1000)
+
+
+def update_next_players(ori_id, numbers):
     try:
-        for i in range(ori_id, ori_id + 100):
+        for i in range(ori_id, ori_id + numbers):
             user_id = str(i)
             user = get_user_info(user_id)
             if user is None:
@@ -80,12 +85,17 @@ def update_next_100_players(ori_id):
 
 def update_prev_100_players_action(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
-    q.enqueue(update_prev_100_players, ori_id)
+    q.enqueue(update_prev_players, ori_id, 100)
 
 
-def update_prev_100_players(ori_id):
+def update_prev_1000_players_action(modeladmin, request, queryset):
+    ori_id = int(queryset.first().ori_id)
+    q.enqueue(update_prev_players, ori_id, 1000)
+
+
+def update_prev_players(ori_id, numbers):
     try:
-        for i in range(ori_id - 100, ori_id):
+        for i in range(ori_id - numbers, ori_id):
             user_id = str(i)
             user = get_user_info(user_id)
             if user is None:
@@ -98,13 +108,16 @@ def update_prev_100_players(ori_id):
 
 update_player_info.short_description = "更新指定玩家资料"
 update_next_100_players_action.short_description = "更新后100名玩家资料"
+update_next_1000_players_action.short_description = "更新后1000名玩家资料"
 update_prev_100_players_action.short_description = "更新前100名玩家资料"
+update_prev_1000_players_action.short_description = "更新前1000名玩家资料"
 
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('ori_id', 'nick', 'total_earn', 'pool_rate', 'win_rate', 'hand_cnt', 'per')
     search_fields = ('nick',)
-    actions = [update_player_info, update_next_100_players_action, update_prev_100_players_action]
+    actions = [update_player_info, update_next_100_players_action, update_next_1000_players_action,
+               update_prev_100_players_action, update_prev_1000_players_action]
 
 
 admin.site.register(Player, PlayerAdmin)
