@@ -62,12 +62,12 @@ def update_player_info(modeladmin, request, queryset):
 
 def update_next_100_players_action(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
-    q.enqueue(update_next_players, ori_id, 100)
+    q.enqueue(update_next_players, ori_id, 100, timeout=600)
 
 
 def update_next_1000_players_action(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
-    q.enqueue(update_next_players, ori_id, 1000)
+    q.enqueue(update_next_players, ori_id, 1000, timeout=1800)
 
 
 def update_next_players(ori_id, numbers):
@@ -85,12 +85,12 @@ def update_next_players(ori_id, numbers):
 
 def update_prev_100_players_action(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
-    q.enqueue(update_prev_players, ori_id, 100)
+    q.enqueue(update_prev_players, ori_id, 100, timeout=600)
 
 
 def update_prev_1000_players_action(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
-    q.enqueue(update_prev_players, ori_id, 1000)
+    q.enqueue(update_prev_players, ori_id, 1000, timeout=1800)
 
 
 def update_prev_players(ori_id, numbers):
