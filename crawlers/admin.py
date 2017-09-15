@@ -2,10 +2,12 @@ import requests
 from django.contrib import admin
 from rq import Queue
 
-from crawlers.models import Player
 from worker import conn
 
 q = Queue(connection=conn)
+
+from crawlers.models import Player
+
 
 def get_user_info(user_id):
     user_detail_url = 'http://cgi.allinpokers.com:8080/api/customer/detail?user_id=%s&operator_id=%s&room_type=0' % (
@@ -58,47 +60,51 @@ def update_player_info(modeladmin, request, queryset):
         print(error)
 
 
-def update_next_50_players(modeladmin, request, queryset):
+def update_next_100_players_action(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
+    q.enqueue(update_next_100_players, ori_id)
+
+
+def update_next_100_players(ori_id):
     try:
-        for i in range(ori_id, ori_id + 50):
+        for i in range(ori_id, ori_id + 100):
             user_id = str(i)
             user = get_user_info(user_id)
             if user is None:
                 continue
             Player.objects.update_or_create(defaults=user, ori_id=user_id)
-        print('更新后50名玩家资料成功')
+        print('更新后100名玩家资料成功')
     except Exception as error:
         print(error)
 
 
-def update_prev_50_players_action(modeladmin, request, queryset):
+def update_prev_100_players_action(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
-    q.enqueue(update_prev_50_players, ori_id)
+    q.enqueue(update_prev_100_players, ori_id)
 
 
-def update_prev_50_players(ori_id):
+def update_prev_100_players(ori_id):
     try:
-        for i in range(ori_id - 50, ori_id):
+        for i in range(ori_id - 100, ori_id):
             user_id = str(i)
             user = get_user_info(user_id)
             if user is None:
                 continue
             Player.objects.update_or_create(defaults=user, ori_id=user_id)
-        print('更新前50玩家资料成功')
+        print('更新前100玩家资料成功')
     except Exception as error:
         print(error)
 
 
-update_player_info.short_description = "更新玩家资料"
-update_next_50_players.short_description = "更新后50名玩家资料"
-update_prev_50_players_action.short_description = "更新前50名玩家资料"
+update_player_info.short_description = "更新指定玩家资料"
+update_next_100_players_action.short_description = "更新后100名玩家资料"
+update_prev_100_players_action.short_description = "更新前100名玩家资料"
 
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('ori_id', 'nick', 'total_earn', 'pool_rate', 'win_rate', 'hand_cnt', 'per')
     search_fields = ('nick',)
-    actions = [update_player_info, update_next_50_players, update_prev_50_players_action]
+    actions = [update_player_info, update_next_100_players_action, update_prev_100_players_action]
 
 
 admin.site.register(Player, PlayerAdmin)
