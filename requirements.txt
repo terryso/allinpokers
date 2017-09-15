@@ -5,3 +5,4 @@ psycopg2==2.6.2
 whitenoise==3.2
 django-flat-responsive==1.4.1
 requests==2.18.4
+rq==0.8.2
