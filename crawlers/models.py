@@ -20,3 +20,10 @@ class Player(models.Model):
     total_earn = models.IntegerField(u'总盈利', default=0)
     create_time = models.DateTimeField(u'创建时间', auto_now_add=True)
     update_time = models.DateTimeField(u'更新时间', auto_now=True)
+
+    def __str__(self):
+        return self.nick
+
+    class Meta:
+        verbose_name = u'玩家'
+        verbose_name_plural = u'玩家'
