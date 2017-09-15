@@ -19,8 +19,8 @@ def get_user_info(user_id):
 
     user_detail = detail_rsp.json()
     user_main = main_rsp.json()
-    print(user_detail)
-    print(user_main)
+    # print(user_detail)
+    # print(user_main)
     user = {
         'ori_id': user_id,
         'nick': user_detail.get('nick'),
@@ -51,6 +51,7 @@ def update_player_info(modeladmin, request, queryset):
             if user is None:
                 continue
             Player.objects.update_or_create(defaults=user, ori_id=user_id)
+        print('更新玩家资料成功')
     except Exception as error:
         print(error)
 
@@ -63,6 +64,7 @@ def update_next_100_players(modeladmin, request, queryset):
             if user is None:
                 continue
             Player.objects.update_or_create(defaults=user, ori_id=user_id)
+        print('更新后100名玩家资料成功')
     except Exception as error:
         print(error)
 
@@ -75,6 +77,7 @@ def update_prev_100_players(modeladmin, request, queryset):
             if user is None:
                 continue
             Player.objects.update_or_create(defaults=user, ori_id=user_id)
+        print('更新前100玩家资料成功')
     except Exception as error:
         print(error)
 

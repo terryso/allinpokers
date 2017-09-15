@@ -36,8 +36,8 @@ def get_user_info(user_id):
 
     user_detail = detail_rsp.json()
     user_main = main_rsp.json()
-    print(user_detail)
-    print(user_main)
+    # print(user_detail)
+    # print(user_main)
     user = {
         'ori_id': user_id,
         'nick': user_detail.get('nick'),
