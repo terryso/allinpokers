@@ -55,10 +55,10 @@ def update_player_info(modeladmin, request, queryset):
     except Exception as error:
         print(error)
 
-def update_next_100_players(modeladmin, request, queryset):
+def update_next_50_players(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
     try:
-        for i in range(ori_id, ori_id + 100):
+        for i in range(ori_id, ori_id + 50):
             user_id = str(i)
             user = get_user_info(user_id)
             if user is None:
@@ -68,10 +68,10 @@ def update_next_100_players(modeladmin, request, queryset):
     except Exception as error:
         print(error)
 
-def update_prev_100_players(modeladmin, request, queryset):
+def update_prev_50_players(modeladmin, request, queryset):
     ori_id = int(queryset.first().ori_id)
     try:
-        for i in range(ori_id - 100, ori_id):
+        for i in range(ori_id - 50, ori_id):
             user_id = str(i)
             user = get_user_info(user_id)
             if user is None:
@@ -82,14 +82,14 @@ def update_prev_100_players(modeladmin, request, queryset):
         print(error)
 
 update_player_info.short_description = "更新玩家资料"
-update_next_100_players.short_description = "更新后100名玩家资料"
-update_prev_100_players.short_description = "更新前100名玩家资料"
+update_next_50_players.short_description = "更新后50名玩家资料"
+update_prev_50_players.short_description = "更新前50名玩家资料"
 
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('ori_id', 'nick', 'total_earn', 'pool_rate', 'win_rate', 'hand_cnt', 'per')
     search_fields = ('nick',)
-    actions = [update_player_info, update_next_100_players, update_prev_100_players]
+    actions = [update_player_info, update_next_50_players, update_prev_50_players]
 
 
 admin.site.register(Player, PlayerAdmin)
