@@ -115,7 +115,7 @@ update_prev_1000_players_action.short_description = "更新前1000名玩家资�
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('ori_id', 'nick', 'total_earn', 'pool_rate', 'win_rate', 'hand_cnt', 'per')
-    search_fields = ('nick',)
+    search_fields = ('ori_id', 'nick',)
     actions = [update_player_info, update_next_100_players_action, update_next_1000_players_action,
                update_prev_100_players_action, update_prev_1000_players_action]
 
