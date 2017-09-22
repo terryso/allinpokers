@@ -1,6 +1,13 @@
 import os
 
 import django
+from django.http import HttpResponse
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.generics import GenericAPIView as BaseView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSetMixin
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "allin_pokers.settings")
 django.setup()
@@ -8,9 +15,43 @@ django.setup()
 import requests
 from crawlers.models import Player
 
+def success_rsp(obj=None, http_rsp=False):
+    if obj is not None:
+        rsp_data = {'error_code': '0', 'error_message': '', u'result': obj}
+    else:
+        rsp_data = {'error_code': '0', 'error_message': ''}
+
+    # log.debug(rsp_data)
+
+    if http_rsp:
+        return HttpResponse(JSONRenderer().render(rsp_data), content_type='application/json')
+    else:
+        return Response(rsp_data)
+
+
+def error_rsp(code, msg, data=None, http_rsp=False):
+    if data:
+        rsp_data = {'error_code': code, 'error_message': msg, 'error_data': data}
+    else:
+        rsp_data = {'error_code': code, 'error_message': msg}
+    if http_rsp:
+        return HttpResponse(JSONRenderer().render(rsp_data), content_type='application/json')
+    return Response(rsp_data)
+
+
+class APIView(BaseView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def request_core_api(self, shop):
+        pass
+
+
+class ViewSet(ViewSetMixin, APIView):
+    pass
+
 
 def basic_info_crawler():
-
     try:
         for i in range(197871, 300000):
             user_id = str(i)
@@ -23,7 +64,8 @@ def basic_info_crawler():
 
 
 def get_user_info(user_id):
-    user_detail_url = 'http://cgi.allinpokers.com:8080/api/customer/detail?user_id=%s&operator_id=%s&room_type=0' % (user_id, user_id)
+    user_detail_url = 'http://cgi.allinpokers.com:8080/api/customer/detail?user_id=%s&operator_id=%s&room_type=0' % (
+    user_id, user_id)
     detail_rsp = requests.get(user_detail_url)
     if detail_rsp.status_code != 200:
         print(detail_rsp.status_code)
