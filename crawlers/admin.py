@@ -47,7 +47,15 @@ def get_user_info(user_id):
     return user
 
 
-def update_player_info(modeladmin, request, queryset):
+def update_player_info_action(modeladmin, request, queryset):
+    numbers = queryset.count()
+    if numbers >= 10:
+        q.enqueue(update_player_info, queryset, numbers, timeout=600)
+    else:
+        update_player_info(queryset, numbers)
+
+
+def update_player_info(queryset, numbers):
     try:
         for user in queryset:
             user_id = user.ori_id
@@ -55,7 +63,8 @@ def update_player_info(modeladmin, request, queryset):
             if user is None:
                 continue
             Player.objects.update_or_create(defaults=user, ori_id=user_id)
-        print('更新玩家资料成功')
+            print('更新玩家(%s)资料成功' % user.get('nick'))
+        print('更新后%s名玩家资料成功' % numbers)
     except Exception as error:
         print(error)
 
@@ -78,7 +87,8 @@ def update_next_players(ori_id, numbers):
             if user is None:
                 continue
             Player.objects.update_or_create(defaults=user, ori_id=user_id)
-        print('更新后100名玩家资料成功')
+            print('更新玩家(%s)资料成功' % user.get('nick'))
+        print('更新后%s名玩家资料成功' % numbers)
     except Exception as error:
         print(error)
 
@@ -101,12 +111,13 @@ def update_prev_players(ori_id, numbers):
             if user is None:
                 continue
             Player.objects.update_or_create(defaults=user, ori_id=user_id)
-        print('更新前100玩家资料成功')
+            print('更新玩家(%s)资料成功' % user.get('nick'))
+        print('更新前%s玩家资料成功' % numbers)
     except Exception as error:
         print(error)
 
 
-update_player_info.short_description = "更新指定玩家资料"
+update_player_info_action.short_description = "更新指定玩家资料"
 update_next_100_players_action.short_description = "更新后100名玩家资料"
 update_next_1000_players_action.short_description = "更新后1000名玩家资料"
 update_prev_100_players_action.short_description = "更新前100名玩家资料"
@@ -116,7 +127,7 @@ update_prev_1000_players_action.short_description = "更新前1000名玩家资�
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('ori_id', 'nick', 'total_earn', 'pool_rate', 'win_rate', 'hand_cnt', 'per')
     search_fields = ('ori_id', 'nick',)
-    actions = [update_player_info, update_next_100_players_action, update_next_1000_players_action,
+    actions = [update_player_info_action, update_next_100_players_action, update_next_1000_players_action,
                update_prev_100_players_action, update_prev_1000_players_action]
 
 
