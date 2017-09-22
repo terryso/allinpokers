@@ -69,10 +69,11 @@ class PlayerViewSet(ViewSet):
 
         conditions = None
         for i in range(0, len(nick_names)):
+            nick_name = nick_names[i].strip()
             if i == 0:
-                conditions = Q(nick__contains=nick_names[i])
+                conditions = Q(nick__contains=nick_name)
             else:
-                conditions = conditions | Q(nick__contains=nick_names[i])
+                conditions = conditions | Q(nick__contains=nick_name)
 
         players = Player.objects.filter(conditions)
         ret = PlayerSerializer(players, many=True).data
