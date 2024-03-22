@@ -7,3 +7,4 @@ django-flat-responsive==1.4.1
 requests==2.18.4
 rq==0.8.2
 djangorestframework
+wechat==0.4.16
